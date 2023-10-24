@@ -1,4 +1,5 @@
 import json
+from subprocess import run
 
 def format_chat_log(chat_log):
     formatted_chat_log = ""
@@ -6,7 +7,7 @@ def format_chat_log(chat_log):
     for turn in turns:
         request_message = turn['request']['message']
         response_message = turn['response']['message']
-        formatted_chat_log += f"request: {request_message}\nresponse: {response_message}\n\n"
+        formatted_chat_log += f"# request:\n{request_message}\n# response:\n{response_message}\n\n---\n"
     return formatted_chat_log
 
 # Path to the JSON file
@@ -31,3 +32,10 @@ formatted_chat_log = format_chat_log(chat_log)
 # Creating and saving the formatted chat log to a new text file
 with open(output_file_path, 'w') as file:
     file.write(formatted_chat_log)
+
+
+command = 'gh gist create --filename copilot.md -'
+result = run(command, input=formatted_chat_log, shell=True, capture_output=True, text=True)
+
+# Print the output of the command
+print(result.stdout)
